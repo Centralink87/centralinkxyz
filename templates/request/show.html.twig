@@ -1,0 +1,200 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détail de la demande — Centralink{% endblock %}
+
+{% block stylesheets %}
+<style>
+    .content-wrapper {
+        padding: 2rem 0;
+    }
+
+    .detail-card {
+        background: var(--color-bg-secondary);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-lg);
+        padding: 2.5rem;
+        max-width: 700px;
+        margin: 0 auto;
+    }
+
+    .detail-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 2rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid var(--color-border);
+    }
+
+    .detail-title {
+        font-size: 1.75rem;
+        font-weight: 700;
+    }
+
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--color-text-muted);
+        margin-bottom: 1.5rem;
+        font-size: 0.9rem;
+    }
+
+    .back-link:hover {
+        color: var(--color-text);
+    }
+
+    .detail-grid {
+        display: grid;
+        gap: 1.5rem;
+    }
+
+    .detail-item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .detail-label {
+        font-size: 0.85rem;
+        color: var(--color-text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        font-weight: 600;
+    }
+
+    .detail-value {
+        font-size: 1.1rem;
+        font-weight: 500;
+    }
+
+    .type-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        background: var(--color-bg-tertiary);
+        border-radius: var(--radius-sm);
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    .type-deposit {
+        background: rgba(16, 185, 129, 0.15);
+        color: var(--color-success);
+    }
+
+    .type-withdrawal {
+        background: rgba(239, 68, 68, 0.15);
+        color: #ef4444;
+    }
+
+    .crypto-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        background: var(--color-bg-tertiary);
+        border-radius: var(--radius-sm);
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.5rem 1rem;
+        border-radius: 50px;
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+    .status-validated {
+        background: rgba(16, 185, 129, 0.15);
+        color: var(--color-success);
+    }
+
+    .status-pending {
+        background: rgba(245, 158, 11, 0.15);
+        color: #f59e0b;
+    }
+
+    .public-address {
+        font-family: var(--font-mono);
+        font-size: 0.9rem;
+        color: var(--color-text);
+        word-break: break-all;
+        padding: 0.75rem;
+        background: var(--color-bg-tertiary);
+        border-radius: var(--radius-sm);
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="content-wrapper">
+    <div class="container">
+        <a href="{{ path('app_request_index') }}" class="back-link">
+            ← Retour aux demandes
+        </a>
+
+        <div class="detail-card">
+            <div class="detail-header">
+                <h1 class="detail-title">Détail de la demande</h1>
+                <span class="status-badge {{ request.isValidated ? 'status-validated' : 'status-pending' }}">
+                    {{ request.isValidated ? '✓ Validée' : '⏳ En attente' }}
+                </span>
+            </div>
+
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <span class="detail-label">Type</span>
+                    <span class="detail-value">
+                        <span class="type-badge type-{{ request.type.value }}">
+                            {{ request.type.label }}
+                        </span>
+                    </span>
+                </div>
+
+                <div class="detail-item">
+                    <span class="detail-label">Crypto</span>
+                    <span class="detail-value">
+                        <span class="crypto-badge">
+                            {{ request.cryptoType.symbol }} — {{ request.cryptoType.label }}
+                        </span>
+                    </span>
+                </div>
+
+                <div class="detail-item">
+                    <span class="detail-label">Montant</span>
+                    <span class="detail-value" style="font-family: var(--font-mono); font-size: 1.5rem;">
+                        {{ request.amount|number_format(8) }}
+                    </span>
+                </div>
+
+                {% if request.publicAddress %}
+                    <div class="detail-item">
+                        <span class="detail-label">Adresse publique</span>
+                        <span class="public-address">{{ request.publicAddress }}</span>
+                    </div>
+                {% endif %}
+
+                <div class="detail-item">
+                    <span class="detail-label">Créée le</span>
+                    <span class="detail-value">{{ request.createdAt|date('d/m/Y à H:i') }}</span>
+                </div>
+
+                {% if request.isValidated and request.validatedAt %}
+                    <div class="detail-item">
+                        <span class="detail-label">Validée le</span>
+                        <span class="detail-value">{{ request.validatedAt|date('d/m/Y à H:i') }}</span>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+

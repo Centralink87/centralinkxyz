@@ -1,0 +1,177 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Connexion — Centralink{% endblock %}
+
+{% block stylesheets %}
+<style>
+    .auth-wrapper {
+        min-height: calc(100vh - 80px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+    }
+
+    .auth-card {
+        background: var(--color-bg-secondary);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-lg);
+        padding: 2.5rem;
+        width: 100%;
+        max-width: 420px;
+    }
+
+    .auth-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .auth-icon {
+        width: 64px;
+        height: 64px;
+        background: linear-gradient(135deg, var(--color-accent), var(--color-accent-light));
+        border-radius: var(--radius-md);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        margin: 0 auto 1.5rem;
+    }
+
+    .auth-title {
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .auth-subtitle {
+        color: var(--color-text-muted);
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: var(--color-text);
+    }
+
+    .form-input {
+        width: 100%;
+        padding: 0.875rem 1rem;
+        background: var(--color-bg);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-md);
+        color: var(--color-text);
+        font-family: var(--font-sans);
+        font-size: 1rem;
+        transition: all var(--transition);
+    }
+
+    .form-input:focus {
+        outline: none;
+        border-color: var(--color-accent);
+        box-shadow: 0 0 0 3px var(--color-accent-glow);
+    }
+
+    .form-input::placeholder {
+        color: var(--color-text-muted);
+    }
+
+    .auth-error {
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid #ef4444;
+        border-radius: var(--radius-md);
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        color: #ef4444;
+        font-size: 0.9rem;
+    }
+
+    .auth-actions {
+        margin-top: 2rem;
+    }
+
+    .auth-actions .btn {
+        width: 100%;
+        padding: 1rem;
+        font-size: 1rem;
+    }
+
+    .auth-footer {
+        text-align: center;
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--color-border);
+        color: var(--color-text-muted);
+    }
+
+    .auth-footer a {
+        color: var(--color-accent-light);
+        font-weight: 500;
+    }
+
+    .auth-footer a:hover {
+        color: var(--color-text);
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <div class="auth-header">
+            <div class="auth-icon">🔐</div>
+            <h1 class="auth-title">Connexion</h1>
+            <p class="auth-subtitle">Accédez à votre espace</p>
+        </div>
+
+        {% if error %}
+            <div class="auth-error">
+                ⚠️ {{ error.messageKey|trans(error.messageData, 'security') }}
+            </div>
+        {% endif %}
+
+        <form method="post">
+            <div class="form-group">
+                <label for="username">Email</label>
+                <input type="email" 
+                       value="{{ last_username }}" 
+                       name="_username" 
+                       id="username" 
+                       class="form-input" 
+                       autocomplete="email" 
+                       placeholder="john@exemple.com"
+                       required 
+                       autofocus>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Mot de passe</label>
+                <input type="password" 
+                       name="_password" 
+                       id="password" 
+                       class="form-input" 
+                       autocomplete="current-password" 
+                       placeholder="••••••••"
+                       required>
+            </div>
+
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+            <div class="auth-actions">
+                <button class="btn btn-primary" type="submit">
+                    Se connecter →
+                </button>
+            </div>
+        </form>
+
+        <div class="auth-footer">
+            <p>Pas encore de compte ? <a href="{{ path('app_register') }}">Créer un compte</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

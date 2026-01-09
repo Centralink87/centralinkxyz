@@ -1,0 +1,44 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block page_title %}Dashboard Admin{% endblock %}
+
+{% block main %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">🔗 Bienvenue sur Centralink Admin</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card bg-warning text-dark mb-3">
+                            <div class="card-body text-center">
+                                <h1 class="display-4">{{ pending_count }}</h1>
+                                <p class="mb-0">Transaction(s) en attente</p>
+                            </div>
+                            <div class="card-footer">
+                                <a href="{{ ea_url().setController('App\\Controller\\Admin\\TransactionCrudController').setAction('index').set('filters[isValidated]', '0') }}" class="btn btn-dark btn-sm">
+                                    Voir les transactions à valider →
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <hr>
+                
+                <h4>Actions rapides</h4>
+                <div class="btn-group" role="group">
+                    <a href="{{ ea_url().setController('App\\Controller\\Admin\\TransactionCrudController').setAction('index') }}" class="btn btn-outline-primary">
+                        <i class="fa fa-list"></i> Toutes les transactions
+                    </a>
+                    <a href="{{ ea_url().setController('App\\Controller\\Admin\\UserCrudController').setAction('index') }}" class="btn btn-outline-secondary">
+                        <i class="fa fa-users"></i> Utilisateurs
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

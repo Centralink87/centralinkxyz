@@ -1,0 +1,173 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Clôturer Transaction — Centralink{% endblock %}
+
+{% block stylesheets %}
+<style>
+    .content-wrapper {
+        padding: 2rem 0;
+        min-height: calc(100vh - 80px);
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+    }
+
+    .form-card {
+        background: var(--color-bg-secondary);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-lg);
+        padding: 2.5rem;
+        width: 100%;
+        max-width: 500px;
+    }
+
+    .form-header {
+        margin-bottom: 2rem;
+    }
+
+    .form-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-subtitle {
+        color: var(--color-text-muted);
+    }
+
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--color-text-muted);
+        margin-bottom: 1.5rem;
+        font-size: 0.9rem;
+    }
+
+    .back-link:hover {
+        color: var(--color-text);
+    }
+
+    .transaction-summary {
+        background: var(--color-bg);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-md);
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.5rem 0;
+    }
+
+    .summary-row:not(:last-child) {
+        border-bottom: 1px solid var(--color-border);
+    }
+
+    .summary-label {
+        color: var(--color-text-muted);
+    }
+
+    .summary-value {
+        font-weight: 600;
+        font-family: var(--font-mono);
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: var(--color-text);
+    }
+
+    .form-input {
+        width: 100%;
+        padding: 0.875rem 1rem;
+        background: var(--color-bg);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-md);
+        color: var(--color-text);
+        font-family: var(--font-sans);
+        font-size: 1rem;
+        transition: all var(--transition);
+    }
+
+    .form-input:focus {
+        outline: none;
+        border-color: var(--color-accent);
+        box-shadow: 0 0 0 3px var(--color-accent-glow);
+    }
+
+    .form-hint {
+        font-size: 0.85rem;
+        color: var(--color-text-muted);
+        margin-top: 0.5rem;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="content-wrapper">
+    <div class="form-card">
+        <a href="{{ path('app_transaction_show', {id: transaction.id}) }}" class="back-link">
+            ← Retour aux détails
+        </a>
+
+        <div class="form-header">
+            <h1 class="form-title">💰 Clôturer la position</h1>
+            <p class="form-subtitle">Entrez le prix de sortie pour calculer votre P&L</p>
+        </div>
+
+        <div class="transaction-summary">
+            <div class="summary-row">
+                <span class="summary-label">Crypto</span>
+                <span class="summary-value">{{ transaction.cryptoType.symbol }}</span>
+            </div>
+            <div class="summary-row">
+                <span class="summary-label">Montant</span>
+                <span class="summary-value">{{ transaction.amount|number_format(4) }}</span>
+            </div>
+            <div class="summary-row">
+                <span class="summary-label">Prix d'entrée</span>
+                <span class="summary-value">${{ transaction.entryPrice|number_format(2) }}</span>
+            </div>
+            <div class="summary-row">
+                <span class="summary-label">Valeur d'entrée</span>
+                <span class="summary-value">${{ (transaction.entryPrice * transaction.amount)|number_format(2) }}</span>
+            </div>
+        </div>
+
+        {{ form_start(form) }}
+            {% include 'transaction/_form.html.twig' %}
+            <p class="form-hint">
+                💡 Entrez le prix auquel vous avez vendu pour calculer votre bénéfice ou perte.
+            </p>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    ✓ Clôturer
+                </button>
+                <a href="{{ path('app_transaction_show', {id: transaction.id}) }}" class="btn btn-secondary">
+                    Annuler
+                </a>
+            </div>
+        {{ form_end(form) }}
+    </div>
+</div>
+{% endblock %}
+
+
+
+

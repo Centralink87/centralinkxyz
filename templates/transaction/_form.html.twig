@@ -1,0 +1,77 @@
+<style>
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: var(--color-text);
+    }
+
+    .form-input,
+    .form-select {
+        width: 100%;
+        padding: 0.875rem 1rem;
+        background: var(--color-bg);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-md);
+        color: var(--color-text);
+        font-family: var(--font-sans);
+        font-size: 1rem;
+        transition: all var(--transition);
+    }
+
+    .form-input:focus,
+    .form-select:focus {
+        outline: none;
+        border-color: var(--color-accent);
+        box-shadow: 0 0 0 3px var(--color-accent-glow);
+    }
+
+    .form-input::placeholder {
+        color: var(--color-text-muted);
+    }
+
+    .form-select option {
+        background: var(--color-bg-secondary);
+        color: var(--color-text);
+    }
+
+    .form-hint {
+        font-size: 0.85rem;
+        color: var(--color-text-muted);
+        margin-top: 0.5rem;
+    }
+
+    .form-error {
+        color: #ef4444;
+        font-size: 0.85rem;
+        margin-top: 0.5rem;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+</style>
+
+{% for field in form %}
+    {% if field.vars.name != '_token' %}
+        <div class="form-group">
+            {{ form_label(field) }}
+            {{ form_widget(field) }}
+            {% if field.vars.errors|length > 0 %}
+                <div class="form-error">{{ form_errors(field) }}</div>
+            {% endif %}
+        </div>
+    {% endif %}
+{% endfor %}
+
+{{ form_rest(form) }}
+
+
+
+

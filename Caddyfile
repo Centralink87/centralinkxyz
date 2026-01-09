@@ -1,0 +1,22 @@
+{
+    frankenphp
+    order php_server before file_server
+}
+
+:{$PORT:8000} {
+    root * public
+    
+    # Servir les fichiers statiques (assets, bundles, etc.)
+    @static {
+        path /bundles/*
+        path /assets/*
+        path /images/*
+        path /favicon.ico
+    }
+    handle @static {
+        file_server
+    }
+    
+    # Tout le reste passe par PHP
+    php_server
+}

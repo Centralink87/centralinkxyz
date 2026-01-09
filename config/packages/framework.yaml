@@ -1,0 +1,23 @@
+# see https://symfony.com/doc/current/reference/configuration/framework.html
+framework:
+    secret: '%env(APP_SECRET)%'
+
+    # Note that the session will be started ONLY if you read or write from it.
+    session: true
+
+    #esi: true
+    #fragments: true
+
+when@test:
+    framework:
+        test: true
+        session:
+            storage_factory_id: session.storage.factory.mock_file
+
+when@prod:
+    framework:
+        # Trust all proxies (nécessaire pour Railway qui utilise un proxy HTTPS)
+        # Railway utilise un proxy qui gère HTTPS, donc on doit faire confiance aux headers X-Forwarded-*
+        # REMOTE_ADDR signifie faire confiance à l'adresse IP du client (le proxy Railway)
+        trusted_proxies: 'REMOTE_ADDR'
+        trusted_headers: ['x-forwarded-for', 'x-forwarded-host', 'x-forwarded-proto', 'x-forwarded-port', 'x-forwarded-prefix']

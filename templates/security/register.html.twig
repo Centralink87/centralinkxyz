@@ -1,0 +1,203 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription — Centralink{% endblock %}
+
+{% block stylesheets %}
+<style>
+    .auth-wrapper {
+        min-height: calc(100vh - 80px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+    }
+
+    .auth-card {
+        background: var(--color-bg-secondary);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-lg);
+        padding: 2.5rem;
+        width: 100%;
+        max-width: 420px;
+    }
+
+    .auth-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .auth-icon {
+        width: 64px;
+        height: 64px;
+        background: linear-gradient(135deg, var(--color-accent), var(--color-accent-light));
+        border-radius: var(--radius-md);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        margin: 0 auto 1.5rem;
+    }
+
+    .auth-title {
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .auth-subtitle {
+        color: var(--color-text-muted);
+    }
+
+    .form-group {
+        margin-bottom: 1.25rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: var(--color-text);
+    }
+
+    .form-input {
+        width: 100%;
+        padding: 0.875rem 1rem;
+        background: var(--color-bg);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-md);
+        color: var(--color-text);
+        font-family: var(--font-sans);
+        font-size: 1rem;
+        transition: all var(--transition);
+    }
+
+    .form-input:focus {
+        outline: none;
+        border-color: var(--color-accent);
+        box-shadow: 0 0 0 3px var(--color-accent-glow);
+    }
+
+    .form-input::placeholder {
+        color: var(--color-text-muted);
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    .form-error {
+        color: #ef4444;
+        font-size: 0.85rem;
+        margin-top: 0.5rem;
+    }
+
+    .auth-actions {
+        margin-top: 2rem;
+    }
+
+    .auth-actions .btn {
+        width: 100%;
+        padding: 1rem;
+        font-size: 1rem;
+    }
+
+    .auth-footer {
+        text-align: center;
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--color-border);
+        color: var(--color-text-muted);
+    }
+
+    .auth-footer a {
+        color: var(--color-accent-light);
+        font-weight: 500;
+    }
+
+    .auth-footer a:hover {
+        color: var(--color-text);
+    }
+
+    .password-hint {
+        font-size: 0.8rem;
+        color: var(--color-text-muted);
+        margin-top: 0.5rem;
+    }
+
+    @media (max-width: 480px) {
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <div class="auth-header">
+            <div class="auth-icon">✨</div>
+            <h1 class="auth-title">Créer un compte</h1>
+            <p class="auth-subtitle">Rejoignez Centralink</p>
+        </div>
+
+        {{ form_start(registrationForm) }}
+            <div class="form-row">
+                <div class="form-group">
+                    {{ form_label(registrationForm.firstName) }}
+                    {{ form_widget(registrationForm.firstName) }}
+                    {% if registrationForm.firstName.vars.errors|length > 0 %}
+                        <div class="form-error">{{ form_errors(registrationForm.firstName) }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    {{ form_label(registrationForm.lastName) }}
+                    {{ form_widget(registrationForm.lastName) }}
+                    {% if registrationForm.lastName.vars.errors|length > 0 %}
+                        <div class="form-error">{{ form_errors(registrationForm.lastName) }}</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-group">
+                {{ form_label(registrationForm.email) }}
+                {{ form_widget(registrationForm.email) }}
+                {% if registrationForm.email.vars.errors|length > 0 %}
+                    <div class="form-error">{{ form_errors(registrationForm.email) }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                {{ form_label(registrationForm.plainPassword.first) }}
+                {{ form_widget(registrationForm.plainPassword.first) }}
+                <p class="password-hint">Le mot de passe doit comporter au moins 8 caractères et contenir des majuscules, des minuscules et des chiffres.</p>
+                {% if registrationForm.plainPassword.vars.errors|length > 0 %}
+                    <div class="form-error">{{ form_errors(registrationForm.plainPassword) }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                {{ form_label(registrationForm.plainPassword.second) }}
+                {{ form_widget(registrationForm.plainPassword.second) }}
+            </div>
+
+            <div class="auth-actions">
+                <button class="btn btn-primary" type="submit">
+                    Créer mon compte →
+                </button>
+            </div>
+        {{ form_end(registrationForm) }}
+
+        <div class="auth-footer">
+            <p>Déjà un compte ? <a href="{{ path('app_login') }}">Se connecter</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+
+

@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{% block title %}Centralink{% endblock %}</title>
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>🔗</text></svg>">
+        
+        {# Google Fonts - Sora pour un look moderne et distinctif #}
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+        
+        <style>
+            :root {
+                --color-bg: #0a0a0f;
+                --color-bg-secondary: #12121a;
+                --color-bg-tertiary: #1a1a25;
+                --color-text: #e8e8ed;
+                --color-text-muted: #8888a0;
+                --color-accent: #6366f1;
+                --color-accent-light: #818cf8;
+                --color-accent-glow: rgba(99, 102, 241, 0.4);
+                --color-success: #10b981;
+                --color-border: #2a2a3a;
+                --font-sans: 'Sora', system-ui, sans-serif;
+                --font-mono: 'JetBrains Mono', monospace;
+                --radius-sm: 6px;
+                --radius-md: 12px;
+                --radius-lg: 20px;
+                --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            html {
+                font-size: 16px;
+                scroll-behavior: smooth;
+            }
+
+            body {
+                font-family: var(--font-sans);
+                background: var(--color-bg);
+                color: var(--color-text);
+                line-height: 1.6;
+                min-height: 100vh;
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+            }
+
+            /* Background pattern */
+            body::before {
+                content: '';
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: 
+                    radial-gradient(ellipse 80% 50% at 50% -20%, var(--color-accent-glow), transparent),
+                    radial-gradient(circle at 20% 80%, rgba(16, 185, 129, 0.1), transparent 40%),
+                    linear-gradient(180deg, var(--color-bg) 0%, var(--color-bg-secondary) 100%);
+                pointer-events: none;
+                z-index: -1;
+            }
+
+            a {
+                color: var(--color-accent-light);
+                text-decoration: none;
+                transition: color var(--transition);
+            }
+
+            a:hover {
+                color: var(--color-text);
+            }
+
+            .container {
+                width: 100%;
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 0 1.5rem;
+            }
+
+            /* Top Banner */
+            .top-banner {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                z-index: 101;
+                background: linear-gradient(135deg, var(--color-accent), var(--color-accent-light));
+                padding: 0.75rem 0;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            .top-banner .container {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 1rem;
+                flex-wrap: wrap;
+            }
+
+            .top-banner-content {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                flex-wrap: wrap;
+                justify-content: center;
+                color: white;
+                font-size: 0.875rem;
+                font-weight: 500;
+            }
+
+            .top-banner-link {
+                color: white;
+                text-decoration: underline;
+                font-weight: 600;
+                transition: opacity var(--transition);
+            }
+
+            .top-banner-link:hover {
+                opacity: 0.8;
+            }
+
+            /* Navigation */
+            .navbar {
+                position: fixed;
+                top: 48px;
+                left: 0;
+                right: 0;
+                z-index: 100;
+                padding: 1rem 0;
+                background: rgba(10, 10, 15, 0.8);
+                backdrop-filter: blur(20px);
+                border-bottom: 1px solid var(--color-border);
+            }
+
+            .navbar .container {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
+
+            .logo {
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+                font-weight: 600;
+                font-size: 1.25rem;
+                color: var(--color-text);
+            }
+
+            .logo-icon {
+                width: 36px;
+                height: 36px;
+                background: linear-gradient(135deg, var(--color-accent), var(--color-accent-light));
+                border-radius: var(--radius-sm);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.25rem;
+            }
+
+            .nav-links {
+                display: flex;
+                align-items: center;
+                gap: 2rem;
+                list-style: none;
+            }
+
+            .nav-links a {
+                color: var(--color-text-muted);
+                font-weight: 500;
+                font-size: 0.9rem;
+                transition: color var(--transition);
+            }
+
+            .nav-links a:hover {
+                color: var(--color-text);
+            }
+
+            .nav-auth {
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+            }
+
+            .user-greeting {
+                color: var(--color-text-muted);
+                font-size: 0.9rem;
+            }
+
+            .btn-sm {
+                padding: 0.5rem 1rem;
+                font-size: 0.85rem;
+            }
+
+            /* Buttons */
+            .btn {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0.5rem;
+                padding: 0.75rem 1.5rem;
+                font-family: var(--font-sans);
+                font-size: 0.9rem;
+                font-weight: 500;
+                border-radius: var(--radius-md);
+                border: none;
+                cursor: pointer;
+                transition: all var(--transition);
+            }
+
+            .btn-primary {
+                background: linear-gradient(135deg, var(--color-accent), var(--color-accent-light));
+                color: white;
+                box-shadow: 0 4px 20px var(--color-accent-glow);
+            }
+
+            .btn-primary:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 30px var(--color-accent-glow);
+            }
+
+            .btn-secondary {
+                background: var(--color-bg-tertiary);
+                color: var(--color-text);
+                border: 1px solid var(--color-border);
+            }
+
+            .btn-secondary:hover {
+                background: var(--color-border);
+            }
+
+            /* Main content */
+            main {
+                padding-top: 128px;
+                min-height: 100vh;
+            }
+
+            /* Cards */
+            .card {
+                background: var(--color-bg-secondary);
+                border: 1px solid var(--color-border);
+                border-radius: var(--radius-lg);
+                padding: 1.5rem;
+                transition: all var(--transition);
+            }
+
+            .card:hover {
+                border-color: var(--color-accent);
+                transform: translateY(-4px);
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            }
+
+            /* Code blocks */
+            code {
+                font-family: var(--font-mono);
+                background: var(--color-bg-tertiary);
+                padding: 0.2rem 0.5rem;
+                border-radius: var(--radius-sm);
+                font-size: 0.85em;
+            }
+
+            /* Flash messages */
+            .flash-messages {
+                position: fixed;
+                top: 148px;
+                right: 1.5rem;
+                z-index: 200;
+                display: flex;
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+
+            .flash {
+                padding: 1rem 1.5rem;
+                border-radius: var(--radius-md);
+                animation: slideIn 0.3s ease-out;
+            }
+
+            .flash-success {
+                background: rgba(16, 185, 129, 0.15);
+                border: 1px solid var(--color-success);
+                color: var(--color-success);
+            }
+
+            .flash-error {
+                background: rgba(239, 68, 68, 0.15);
+                border: 1px solid #ef4444;
+                color: #ef4444;
+            }
+
+            @keyframes slideIn {
+                from {
+                    opacity: 0;
+                    transform: translateX(100%);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+            }
+
+            /* Footer */
+            .footer {
+                padding: 3rem 0;
+                border-top: 1px solid var(--color-border);
+                text-align: center;
+                color: var(--color-text-muted);
+                font-size: 0.875rem;
+            }
+        </style>
+
+        {% block stylesheets %}{% endblock %}
+
+        {% block javascripts %}
+            {% block importmap %}{{ importmap('app') }}{% endblock %}
+        {% endblock %}
+    </head>
+    <body>
+        {# Top Banner #}
+        <div class="top-banner">
+            <div class="container">
+                <div class="top-banner-content">
+                    <span>Nouveau : Vous naviguez sur la V2 (Bêta). Mise à jour majeure de l'infrastructure pour plus de rapidité et de stabilité.</span>
+                    <a href="mailto:centralinkxyz@protonmail.com" class="top-banner-link">Contacter le support →</a>
+                </div>
+            </div>
+        </div>
+
+        {# Navigation #}
+        <nav class="navbar">
+            <div class="container">
+                <a href="{% if app.user %}{% if is_granted('ROLE_ADMIN') %}{{ path('app_transaction_index') }}{% else %}{{ path('app_request_index') }}{% endif %}{% else %}{{ path('app_login') }}{% endif %}" class="logo">
+                    <img src="{{ asset('images/logo.svg') }}" alt="Centralink" style="height: 37px; width: auto;">
+                </a>
+                <ul class="nav-links">
+                    {% block nav_items %}
+                        {% if app.user %}
+                            {% if not is_granted('ROLE_ADMIN') %}
+                                <li><a href="{{ path('app_home') }}">🏠 Accueil</a></li>
+                            {% endif %}
+                            <li><a href="{{ path('app_request_index') }}">Mes Demandes</a></li>
+                            {% if is_granted('ROLE_ADMIN') %}
+                                <li><a href="{{ path('app_transaction_index') }}">Transactions</a></li>
+                            {% endif %}
+                        {% endif %}
+                    {% endblock %}
+                </ul>
+                <div class="nav-auth">
+                    {% if app.user %}
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <a href="{{ path('admin') }}" class="btn btn-secondary btn-sm">🛡️ Admin</a>
+                        {% endif %}
+                        <span class="user-greeting">👋 {{ app.user.firstName }}</span>
+                        <a href="{{ path('app_logout') }}" class="btn btn-secondary btn-sm">Déconnexion</a>
+                    {% else %}
+                        <a href="{{ path('app_login') }}" class="btn btn-secondary btn-sm">Connexion</a>
+                        <a href="{{ path('app_register') }}" class="btn btn-primary btn-sm">Inscription</a>
+                    {% endif %}
+                </div>
+            </div>
+        </nav>
+
+        {# Flash Messages #}
+        {% if app.flashes is not empty %}
+            <div class="flash-messages">
+                {% for label, messages in app.flashes %}
+                    {% for message in messages %}
+                        <div class="flash flash-{{ label }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {# Main Content #}
+        <main>
+            {% block body %}{% endblock %}
+        </main>
+
+        {# Footer #}
+        <footer class="footer">
+            <div class="container">
+                <p>© {{ "now"|date("Y") }} Centralink </p>
+            </div>
+        </footer>
+    </body>
+</html>

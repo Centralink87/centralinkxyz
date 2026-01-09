@@ -1,0 +1,30 @@
+[variables]
+    PHP_EXTENSIONS = "intl, pdo_pgsql, pgsql, zip, opcache"
+    NODE_VERSION = "20"
+    COMPOSER_ALLOW_SUPERUSER = "1"
+
+[phases.setup]
+    nixPkgs = ["...", "php83Extensions.intl", "php83Extensions.pdo_pgsql"]
+
+[phases.install]
+    cmds = [
+        "mkdir -p /var/log/nginx && mkdir -p /var/cache/nginx",
+        "composer install --no-scripts --ignore-platform-reqs"
+    ]
+
+[phases.build]
+    dependsOn = ["install"]
+    cmds = [
+        "composer install --no-dev --no-scripts --optimize-autoloader",
+        "php bin/console cache:clear --env=prod --no-debug || true",
+        "node --version && npm --version",
+        "mkdir -p assets/vendor",
+        "php bin/console importmap:install --env=prod --no-debug -vv || (echo 'ERROR: importmap:install failed' && exit 1)",
+        "test -d assets/vendor/@hotwired/stimulus || (echo 'ERROR: @hotwired/stimulus not installed' && exit 1)",
+        "php bin/console assets:install public",
+        "php bin/console asset-map:compile --env=prod --no-debug",
+        "php bin/console cache:clear --env=prod --no-debug"
+    ]
+
+[start]
+    cmd = "./start.sh"

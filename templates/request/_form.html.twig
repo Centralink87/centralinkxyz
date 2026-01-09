@@ -1,0 +1,144 @@
+<style>
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: var(--color-text);
+    }
+
+    .form-input,
+    .form-select {
+        width: 100%;
+        padding: 0.875rem 1rem;
+        background: var(--color-bg);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-md);
+        color: var(--color-text);
+        font-family: var(--font-sans);
+        font-size: 1rem;
+        transition: all var(--transition);
+    }
+
+    .form-input:focus,
+    .form-select:focus {
+        outline: none;
+        border-color: var(--color-accent);
+        box-shadow: 0 0 0 3px var(--color-accent-glow);
+    }
+
+    .form-input::placeholder {
+        color: var(--color-text-muted);
+    }
+
+    .form-select option {
+        background: var(--color-bg-secondary);
+        color: var(--color-text);
+    }
+
+    .form-hint {
+        font-size: 0.85rem;
+        color: var(--color-text-muted);
+        margin-top: 0.5rem;
+    }
+
+    .form-error {
+        color: #ef4444;
+        font-size: 0.85rem;
+        margin-top: 0.5rem;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    .form-group.hidden {
+        display: none !important;
+    }
+    
+    #form-group-publicAddress {
+        display: none;
+    }
+    
+    #form-group-publicAddress.show {
+        display: block !important;
+    }
+</style>
+
+{% for field in form %}
+    {% if field.vars.name != '_token' %}
+        <div class="form-group{% if field.vars.name == 'publicAddress' %} hidden{% endif %}" id="form-group-{{ field.vars.name }}">
+            {{ form_label(field) }}
+            {{ form_widget(field) }}
+            {% if field.vars.errors|length > 0 %}
+                <div class="form-error">{{ form_errors(field) }}</div>
+            {% endif %}
+        </div>
+    {% endif %}
+{% endfor %}
+
+{{ form_rest(form) }}
+
+<script>
+(function() {
+    function initFormToggle() {
+        const typeSelect = document.querySelector('select[name="request_form[type]"]') ||
+                          document.querySelector('select[id*="type"]');
+        
+        const publicAddressGroup = document.getElementById('form-group-publicAddress');
+        
+        if (!typeSelect || !publicAddressGroup) {
+            setTimeout(initFormToggle, 100);
+            return;
+        }
+        
+        function togglePublicAddress() {
+            const selectedOption = typeSelect.options[typeSelect.selectedIndex];
+            const selectedText = selectedOption ? selectedOption.text.trim().toLowerCase() : '';
+            
+            // Vérifier si le texte contient "retrait"
+            const isWithdrawal = selectedText === 'retrait' || selectedText.includes('retrait');
+            
+            console.log('Selected text:', selectedText, 'Is withdrawal:', isWithdrawal);
+            
+            if (isWithdrawal) {
+                publicAddressGroup.classList.remove('hidden');
+                publicAddressGroup.classList.add('show');
+                const input = publicAddressGroup.querySelector('input');
+                if (input) {
+                    input.setAttribute('required', 'required');
+                }
+            } else {
+                publicAddressGroup.classList.add('hidden');
+                publicAddressGroup.classList.remove('show');
+                const input = publicAddressGroup.querySelector('input');
+                if (input) {
+                    input.removeAttribute('required');
+                    input.value = '';
+                }
+            }
+        }
+        
+        // Masquer par défaut
+        publicAddressGroup.style.display = 'none';
+        
+        // État initial
+        togglePublicAddress();
+        
+        // Écouter les changements
+        typeSelect.addEventListener('change', togglePublicAddress);
+    }
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initFormToggle);
+    } else {
+        initFormToggle();
+    }
+})();
+</script>
+

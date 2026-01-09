@@ -1,0 +1,283 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Transaction {{ transaction.cryptoType.symbol }} — Centralink{% endblock %}
+
+{% block stylesheets %}
+<style>
+    .content-wrapper {
+        padding: 2rem 0;
+    }
+
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--color-text-muted);
+        margin-bottom: 1.5rem;
+        font-size: 0.9rem;
+    }
+
+    .back-link:hover {
+        color: var(--color-text);
+    }
+
+    .transaction-card {
+        background: var(--color-bg-secondary);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        max-width: 600px;
+    }
+
+    .transaction-header {
+        padding: 2rem;
+        background: var(--color-bg-tertiary);
+        border-bottom: 1px solid var(--color-border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .crypto-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .crypto-icon {
+        width: 56px;
+        height: 56px;
+        background: linear-gradient(135deg, var(--color-accent), var(--color-accent-light));
+        border-radius: var(--radius-md);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: white;
+    }
+
+    .crypto-name {
+        font-size: 1.5rem;
+        font-weight: 700;
+    }
+
+    .crypto-symbol {
+        color: var(--color-text-muted);
+    }
+
+    .status-badge {
+        padding: 0.5rem 1rem;
+        border-radius: 50px;
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+
+    .status-open {
+        background: rgba(99, 102, 241, 0.15);
+        color: var(--color-accent-light);
+    }
+
+    .status-closed {
+        background: rgba(16, 185, 129, 0.15);
+        color: var(--color-success);
+    }
+
+    .transaction-body {
+        padding: 2rem;
+    }
+
+    .detail-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+    }
+
+    .detail-item {
+        padding: 1rem;
+        background: var(--color-bg);
+        border-radius: var(--radius-md);
+    }
+
+    .detail-label {
+        font-size: 0.85rem;
+        color: var(--color-text-muted);
+        margin-bottom: 0.5rem;
+    }
+
+    .detail-value {
+        font-size: 1.25rem;
+        font-weight: 600;
+        font-family: var(--font-mono);
+    }
+
+    .detail-item.full-width {
+        grid-column: span 2;
+    }
+
+    .profit-loss-card {
+        margin-top: 1.5rem;
+        padding: 1.5rem;
+        border-radius: var(--radius-md);
+        text-align: center;
+    }
+
+    .profit-loss-card.positive {
+        background: rgba(16, 185, 129, 0.1);
+        border: 1px solid var(--color-success);
+    }
+
+    .profit-loss-card.negative {
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid #ef4444;
+    }
+
+    .profit-loss-card.pending {
+        background: var(--color-bg);
+        border: 1px dashed var(--color-border);
+    }
+
+    .pl-label {
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .pl-value {
+        font-size: 2rem;
+        font-weight: 700;
+        font-family: var(--font-mono);
+    }
+
+    .pl-value.positive {
+        color: var(--color-success);
+    }
+
+    .pl-value.negative {
+        color: #ef4444;
+    }
+
+    .pl-percentage {
+        font-size: 1rem;
+        margin-top: 0.25rem;
+    }
+
+    .transaction-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--color-border);
+    }
+
+    @media (max-width: 500px) {
+        .detail-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .detail-item.full-width {
+            grid-column: span 1;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="content-wrapper">
+    <div class="container">
+        <a href="{{ path('app_transaction_index') }}" class="back-link">
+            ← Retour aux transactions
+        </a>
+
+        <div class="transaction-card">
+            <div class="transaction-header">
+                <div class="crypto-info">
+                    <div class="crypto-icon">
+                        {{ transaction.cryptoType.symbol[:3] }}
+                    </div>
+                    <div>
+                        <div class="crypto-name">{{ transaction.cryptoType.label }}</div>
+                        <div class="crypto-symbol">{{ transaction.cryptoType.symbol }}</div>
+                    </div>
+                </div>
+                {% if transaction.exitPrice %}
+                    <span class="status-badge status-closed">✓ Clôturée</span>
+                {% else %}
+                    <span class="status-badge status-open">◉ Position ouverte</span>
+                {% endif %}
+            </div>
+
+            <div class="transaction-body">
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <div class="detail-label">Montant</div>
+                        <div class="detail-value">{{ transaction.amount|number_format(8) }}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Date</div>
+                        <div class="detail-value" style="font-family: var(--font-sans); font-size: 1rem;">
+                            {{ transaction.transactionDate|date('d/m/Y H:i') }}
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Prix d'entrée</div>
+                        <div class="detail-value">${{ transaction.entryPrice|number_format(2) }}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Prix de sortie</div>
+                        <div class="detail-value">
+                            {% if transaction.exitPrice %}
+                                ${{ transaction.exitPrice|number_format(2) }}
+                            {% else %}
+                                <span style="color: var(--color-text-muted);">—</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="detail-item full-width">
+                        <div class="detail-label">Valeur d'entrée totale</div>
+                        <div class="detail-value">
+                            ${{ (transaction.entryPrice * transaction.amount)|number_format(2) }}
+                        </div>
+                    </div>
+                </div>
+
+                {# Profit/Loss Card #}
+                {% if transaction.exitPrice %}
+                    {% set pl = transaction.profitLoss %}
+                    {% set plPercent = transaction.profitLossPercentage %}
+                    <div class="profit-loss-card {{ pl >= 0 ? 'positive' : 'negative' }}">
+                        <div class="pl-label">{{ pl >= 0 ? '📈 Bénéfice' : '📉 Perte' }}</div>
+                        <div class="pl-value {{ pl >= 0 ? 'positive' : 'negative' }}">
+                            {{ pl >= 0 ? '+' : '' }}${{ pl|number_format(2) }}
+                        </div>
+                        <div class="pl-percentage" style="color: {{ pl >= 0 ? 'var(--color-success)' : '#ef4444' }};">
+                            {{ plPercent >= 0 ? '+' : '' }}{{ plPercent|number_format(2) }}%
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="profit-loss-card pending">
+                        <div class="pl-label" style="color: var(--color-text-muted);">💡 Position ouverte</div>
+                        <div class="pl-value" style="color: var(--color-text-muted);">
+                            En attente de clôture
+                        </div>
+                    </div>
+                {% endif %}
+
+                <div class="transaction-actions">
+                    {% if not transaction.exitPrice %}
+                        <a href="{{ path('app_transaction_close', {id: transaction.id}) }}" class="btn btn-primary">
+                            💰 Clôturer la position
+                        </a>
+                    {% endif %}
+                    <a href="{{ path('app_transaction_edit', {id: transaction.id}) }}" class="btn btn-secondary">
+                        ✏️ Modifier
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+
+

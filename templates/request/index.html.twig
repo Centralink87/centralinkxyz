@@ -1,0 +1,373 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes Demandes — Centralink{% endblock %}
+
+{% block stylesheets %}
+<style>
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .page-title {
+        font-size: 2rem;
+        font-weight: 700;
+    }
+
+    .section-header {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+        margin-top: 2rem;
+    }
+
+    .section-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+    }
+
+    .section-badge {
+        background: var(--color-accent);
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    .table-container {
+        background: var(--color-bg-secondary);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+    }
+
+    .table-container.pending {
+        border-color: #f59e0b;
+        background: rgba(245, 158, 11, 0.05);
+    }
+
+    .requests-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .requests-table th,
+    .requests-table td {
+        padding: 1rem 1.25rem;
+        text-align: left;
+    }
+
+    .requests-table th {
+        background: var(--color-bg-tertiary);
+        font-weight: 600;
+        font-size: 0.85rem;
+        color: var(--color-text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .table-container.pending .requests-table th {
+        background: rgba(245, 158, 11, 0.1);
+    }
+
+    .requests-table tr {
+        border-bottom: 1px solid var(--color-border);
+    }
+
+    .requests-table tr:last-child {
+        border-bottom: none;
+    }
+
+    .requests-table tr:hover td {
+        background: var(--color-bg-tertiary);
+    }
+
+    .type-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.35rem 0.75rem;
+        background: var(--color-bg-tertiary);
+        border-radius: var(--radius-sm);
+        font-weight: 600;
+        font-size: 0.85rem;
+    }
+
+    .type-deposit {
+        background: rgba(16, 185, 129, 0.15);
+        color: var(--color-success);
+    }
+
+    .type-withdrawal {
+        background: rgba(239, 68, 68, 0.15);
+        color: #ef4444;
+    }
+
+    .crypto-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.35rem 0.75rem;
+        background: var(--color-bg-tertiary);
+        border-radius: var(--radius-sm);
+        font-weight: 600;
+        font-size: 0.85rem;
+    }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.35rem 0.75rem;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+
+    .status-validated {
+        background: rgba(16, 185, 129, 0.15);
+        color: var(--color-success);
+    }
+
+    .status-pending {
+        background: rgba(245, 158, 11, 0.15);
+        color: #f59e0b;
+    }
+
+    .actions {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .btn-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--color-border);
+        background: var(--color-bg);
+        color: var(--color-text-muted);
+        cursor: pointer;
+        transition: all var(--transition);
+    }
+
+    .btn-icon:hover {
+        border-color: var(--color-accent);
+        color: var(--color-accent-light);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: var(--color-text-muted);
+    }
+
+    .empty-state-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+
+    .content-wrapper {
+        padding: 2rem 0;
+    }
+
+    .pending-notice {
+        background: rgba(245, 158, 11, 0.1);
+        border: 1px solid #f59e0b;
+        border-radius: var(--radius-md);
+        padding: 1rem 1.5rem;
+        margin-bottom: 2rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        color: #f59e0b;
+    }
+
+    .public-address {
+        font-family: var(--font-mono);
+        font-size: 0.85rem;
+        color: var(--color-text-muted);
+        word-break: break-all;
+    }
+
+    @media (max-width: 768px) {
+        .requests-table {
+            font-size: 0.9rem;
+        }
+
+        .requests-table th,
+        .requests-table td {
+            padding: 0.75rem;
+        }
+
+        .hide-mobile {
+            display: none;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="content-wrapper">
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title">💳 Mes Demandes</h1>
+            <a href="{{ path('app_request_new') }}" class="btn btn-primary">
+                ➕ Nouvelle demande
+            </a>
+        </div>
+
+        {# Demandes en attente #}
+        {% if pendingRequests|length > 0 %}
+            <div class="pending-notice">
+                ⏳ Vous avez {{ pendingRequests|length }} demande(s) en attente de validation par un administrateur.
+            </div>
+
+            <div class="section-header">
+                <h2 class="section-title">⏳ En attente de validation</h2>
+                <span class="section-badge">{{ pendingRequests|length }}</span>
+            </div>
+
+            <div class="table-container pending">
+                <table class="requests-table">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Crypto</th>
+                            <th>Montant</th>
+                            <th class="hide-mobile">Adresse publique</th>
+                            <th>Statut</th>
+                            <th class="hide-mobile">Créée le</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for request in pendingRequests %}
+                            <tr>
+                                <td>
+                                    <span class="type-badge type-{{ request.type.value }}">
+                                        {{ request.type.label }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="crypto-badge">
+                                        {{ request.cryptoType.symbol }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span style="font-family: var(--font-mono);">
+                                        {{ request.amount|number_format(4) }}
+                                    </span>
+                                </td>
+                                <td class="hide-mobile">
+                                    {% if request.publicAddress %}
+                                        <span class="public-address">{{ request.publicAddress }}</span>
+                                    {% else %}
+                                        <span style="color: var(--color-text-muted);">—</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span class="status-badge status-pending">⏳ En attente</span>
+                                </td>
+                                <td class="hide-mobile">
+                                    {{ request.createdAt|date('d/m/Y H:i') }}
+                                </td>
+                                <td>
+                                    <div class="actions">
+                                        <a href="{{ path('app_request_show', {id: request.id}) }}" class="btn-icon" title="Voir">
+                                            👁
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+
+        {# Demandes validées #}
+        <div class="section-header" style="margin-top: {{ pendingRequests|length > 0 ? '3rem' : '0' }};">
+            <h2 class="section-title">✅ Demandes validées</h2>
+        </div>
+
+        <div class="table-container">
+            {% if validatedRequests|length > 0 %}
+                <table class="requests-table">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Crypto</th>
+                            <th>Montant</th>
+                            <th class="hide-mobile">Adresse publique</th>
+                            <th>Statut</th>
+                            <th class="hide-mobile">Validée le</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for request in validatedRequests %}
+                            <tr>
+                                <td>
+                                    <span class="type-badge type-{{ request.type.value }}">
+                                        {{ request.type.label }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="crypto-badge">
+                                        {{ request.cryptoType.symbol }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span style="font-family: var(--font-mono);">
+                                        {{ request.amount|number_format(4) }}
+                                    </span>
+                                </td>
+                                <td class="hide-mobile">
+                                    {% if request.publicAddress %}
+                                        <span class="public-address">{{ request.publicAddress }}</span>
+                                    {% else %}
+                                        <span style="color: var(--color-text-muted);">—</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span class="status-badge status-validated">✓ Validée</span>
+                                </td>
+                                <td class="hide-mobile">
+                                    {{ request.validatedAt ? request.validatedAt|date('d/m/Y H:i') : '—' }}
+                                </td>
+                                <td>
+                                    <div class="actions">
+                                        <a href="{{ path('app_request_show', {id: request.id}) }}" class="btn-icon" title="Voir">
+                                            👁
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div class="empty-state">
+                    <div class="empty-state-icon">📭</div>
+                    <h3>Aucune demande validée</h3>
+                    <p>Vos demandes apparaîtront ici après validation par un administrateur.</p>
+                    <a href="{{ path('app_request_new') }}" class="btn btn-primary" style="margin-top: 1rem;">
+                        ➕ Nouvelle demande
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+

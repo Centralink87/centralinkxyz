@@ -1,0 +1,578 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes Transactions — Centralink{% endblock %}
+
+{% block stylesheets %}
+<style>
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .page-title {
+        font-size: 2rem;
+        font-weight: 700;
+    }
+
+    /* Stats Cards */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: var(--color-bg-secondary);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-lg);
+        padding: 1.5rem;
+    }
+
+    .stat-label {
+        font-size: 0.85rem;
+        color: var(--color-text-muted);
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-value {
+        font-size: 1.75rem;
+        font-weight: 700;
+    }
+
+    .stat-value.positive {
+        color: var(--color-success);
+    }
+
+    .stat-value.negative {
+        color: #ef4444;
+    }
+
+    /* Section */
+    .section-header {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+        margin-top: 2rem;
+    }
+
+    .section-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+    }
+
+    .section-badge {
+        background: var(--color-accent);
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    /* Table */
+    .table-container {
+        background: var(--color-bg-secondary);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+    }
+
+    .table-container.pending {
+        border-color: #f59e0b;
+        background: rgba(245, 158, 11, 0.05);
+    }
+
+    .transactions-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .transactions-table th,
+    .transactions-table td {
+        padding: 1rem 1.25rem;
+        text-align: left;
+    }
+
+    .transactions-table th {
+        background: var(--color-bg-tertiary);
+        font-weight: 600;
+        font-size: 0.85rem;
+        color: var(--color-text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .table-container.pending .transactions-table th {
+        background: rgba(245, 158, 11, 0.1);
+    }
+
+    .transactions-table tr {
+        border-bottom: 1px solid var(--color-border);
+    }
+
+    .transactions-table tr:last-child {
+        border-bottom: none;
+    }
+
+    .transactions-table tr:hover td {
+        background: var(--color-bg-tertiary);
+    }
+
+    .crypto-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.35rem 0.75rem;
+        background: var(--color-bg-tertiary);
+        border-radius: var(--radius-sm);
+        font-weight: 600;
+        font-size: 0.85rem;
+    }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.35rem 0.75rem;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+
+    .status-open {
+        background: rgba(99, 102, 241, 0.15);
+        color: var(--color-accent-light);
+    }
+
+    .status-closed {
+        background: rgba(16, 185, 129, 0.15);
+        color: var(--color-success);
+    }
+
+    .status-pending {
+        background: rgba(245, 158, 11, 0.15);
+        color: #f59e0b;
+    }
+
+    .profit-loss {
+        font-weight: 600;
+        font-family: var(--font-mono);
+    }
+
+    .profit-loss.positive {
+        color: var(--color-success);
+    }
+
+    .profit-loss.negative {
+        color: #ef4444;
+    }
+
+    .actions {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .btn-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--color-border);
+        background: var(--color-bg);
+        color: var(--color-text-muted);
+        cursor: pointer;
+        transition: all var(--transition);
+    }
+
+    .btn-icon:hover {
+        border-color: var(--color-accent);
+        color: var(--color-accent-light);
+    }
+
+    .btn-icon.danger:hover {
+        border-color: #ef4444;
+        color: #ef4444;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: var(--color-text-muted);
+    }
+
+    .empty-state-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+
+    .content-wrapper {
+        padding: 2rem 0;
+    }
+
+    .pending-notice {
+        background: rgba(245, 158, 11, 0.1);
+        border: 1px solid #f59e0b;
+        border-radius: var(--radius-md);
+        padding: 1rem 1.5rem;
+        margin-bottom: 2rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        color: #f59e0b;
+    }
+
+    .chart-container {
+        background: var(--color-bg-secondary);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-lg);
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .chart-wrapper {
+        position: relative;
+        height: 400px;
+        margin-top: 1rem;
+    }
+
+    @media (max-width: 768px) {
+        .transactions-table {
+            font-size: 0.9rem;
+        }
+
+        .transactions-table th,
+        .transactions-table td {
+            padding: 0.75rem;
+        }
+
+        .hide-mobile {
+            display: none;
+        }
+
+        .chart-wrapper {
+            height: 300px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block javascripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+{% endblock %}
+
+{% block body %}
+<div class="content-wrapper">
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title">📊 Mes Transactions</h1>
+            <a href="{{ path('app_transaction_new') }}" class="btn btn-primary">
+                ➕ Nouvelle transaction
+            </a>
+        </div>
+
+        {# Transactions en attente #}
+        {% if pendingTransactions|length > 0 %}
+            <div class="pending-notice">
+                ⏳ Vous avez {{ pendingTransactions|length }} transaction(s) en attente de validation par un administrateur.
+            </div>
+
+            <div class="section-header">
+                <h2 class="section-title">⏳ En attente de validation</h2>
+                <span class="section-badge">{{ pendingTransactions|length }}</span>
+            </div>
+
+            <div class="table-container pending">
+                <table class="transactions-table">
+                    <thead>
+                        <tr>
+                            <th>Crypto</th>
+                            <th>Montant</th>
+                            <th>Entry Price</th>
+                            <th>Statut</th>
+                            <th class="hide-mobile">Créée le</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for transaction in pendingTransactions %}
+                            <tr>
+                                <td>
+                                    <span class="crypto-badge">
+                                        {{ transaction.cryptoType.symbol }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span style="font-family: var(--font-mono);">
+                                        {{ transaction.amount|number_format(4) }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span style="font-family: var(--font-mono);">
+                                        ${{ transaction.entryPrice|number_format(2) }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="status-badge status-pending">⏳ En attente</span>
+                                </td>
+                                <td class="hide-mobile">
+                                    {{ transaction.createdAt|date('d/m/Y H:i') }}
+                                </td>
+                                <td>
+                                    <div class="actions">
+                                        <a href="{{ path('app_transaction_show', {id: transaction.id}) }}" class="btn-icon" title="Voir">
+                                            👁
+                                        </a>
+                                        <a href="{{ path('app_transaction_edit', {id: transaction.id}) }}" class="btn-icon" title="Modifier">
+                                            ✏️
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+
+        {# Stats (transactions validées) #}
+        <div class="section-header" style="margin-top: {{ pendingTransactions|length > 0 ? '3rem' : '0' }};">
+            <h2 class="section-title">✅ Transactions validées</h2>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Total investi</div>
+                <div class="stat-value">${{ totalInvested|number_format(2, '.', ',') }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Transactions</div>
+                <div class="stat-value">{{ transactions|length }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Clôturées</div>
+                <div class="stat-value">{{ closedTransactions }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">P&L Total</div>
+                <div class="stat-value {{ totalProfitLoss >= 0 ? 'positive' : 'negative' }}">
+                    {{ totalProfitLoss >= 0 ? '+' : '' }}${{ totalProfitLoss|number_format(2, '.', ',') }}
+                </div>
+            </div>
+        </div>
+
+        {# Graphique P&L #}
+        {% if pnlChartData|length > 0 %}
+            <div class="chart-container">
+                <h3 style="margin-bottom: 0.5rem; font-size: 1.1rem; font-weight: 600;">📈 Évolution du P&L</h3>
+                <p style="color: var(--color-text-muted); font-size: 0.9rem; margin-bottom: 1rem;">
+                    Profit et perte cumulatif par date de transaction
+                </p>
+                <div class="chart-wrapper">
+                    <canvas id="pnlChart"></canvas>
+                </div>
+            </div>
+        {% endif %}
+
+        {# Table des transactions validées #}
+        <div class="table-container">
+            {% if transactions|length > 0 %}
+                <table class="transactions-table">
+                    <thead>
+                        <tr>
+                            <th>Crypto</th>
+                            <th>Montant</th>
+                            <th>Entry Price</th>
+                            <th class="hide-mobile">Exit Price</th>
+                            <th>P&L</th>
+                            <th>Statut</th>
+                            <th class="hide-mobile">Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for transaction in transactions %}
+                            <tr>
+                                <td>
+                                    <span class="crypto-badge">
+                                        {{ transaction.cryptoType.symbol }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span style="font-family: var(--font-mono);">
+                                        {{ transaction.amount|number_format(4) }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span style="font-family: var(--font-mono);">
+                                        ${{ transaction.entryPrice|number_format(2) }}
+                                    </span>
+                                </td>
+                                <td class="hide-mobile">
+                                    {% if transaction.exitPrice %}
+                                        <span style="font-family: var(--font-mono);">
+                                            ${{ transaction.exitPrice|number_format(2) }}
+                                        </span>
+                                    {% else %}
+                                        <span style="color: var(--color-text-muted);">—</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if transaction.exitPrice %}
+                                        {% set pl = transaction.profitLoss %}
+                                        <span class="profit-loss {{ pl >= 0 ? 'positive' : 'negative' }}">
+                                            {{ pl >= 0 ? '+' : '' }}${{ pl|number_format(2) }}
+                                        </span>
+                                    {% else %}
+                                        <span style="color: var(--color-text-muted);">—</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if transaction.exitPrice %}
+                                        <span class="status-badge status-closed">✓ Clôturée</span>
+                                    {% else %}
+                                        <span class="status-badge status-open">◉ Ouverte</span>
+                                    {% endif %}
+                                </td>
+                                <td class="hide-mobile">
+                                    {{ transaction.transactionDate|date('d/m/Y') }}
+                                </td>
+                                <td>
+                                    <div class="actions">
+                                        <a href="{{ path('app_transaction_show', {id: transaction.id}) }}" class="btn-icon" title="Voir">
+                                            👁
+                                        </a>
+                                        {% if not transaction.exitPrice %}
+                                            <a href="{{ path('app_transaction_close', {id: transaction.id}) }}" class="btn-icon" title="Clôturer">
+                                                💰
+                                            </a>
+                                        {% endif %}
+                                        <a href="{{ path('app_transaction_edit', {id: transaction.id}) }}" class="btn-icon" title="Modifier">
+                                            ✏️
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div class="empty-state">
+                    <div class="empty-state-icon">📭</div>
+                    <h3>Aucune transaction validée</h3>
+                    <p>Vos transactions apparaîtront ici après validation par un administrateur.</p>
+                    <a href="{{ path('app_transaction_new') }}" class="btn btn-primary" style="margin-top: 1rem;">
+                        ➕ Nouvelle transaction
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% if pnlChartData|length > 0 %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const pnlData = {{ pnlChartData|json_encode|raw }};
+    
+    const labels = pnlData.map(item => item.dateFormatted);
+    const cumulativePnl = pnlData.map(item => parseFloat(item.cumulativePnl.toFixed(2)));
+    
+    const ctx = document.getElementById('pnlChart').getContext('2d');
+    
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'P&L Cumulatif ($)',
+                data: cumulativePnl,
+                borderColor: 'rgb(99, 102, 241)',
+                backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.4,
+                pointRadius: 4,
+                pointHoverRadius: 6,
+                pointBackgroundColor: 'rgb(99, 102, 241)',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: true,
+                    labels: {
+                        color: 'rgba(232, 232, 237, 0.8)',
+                        font: {
+                            size: 12
+                        }
+                    }
+                },
+                tooltip: {
+                    mode: 'index',
+                    intersect: false,
+                    backgroundColor: 'rgba(26, 26, 37, 0.95)',
+                    titleColor: '#e8e8ed',
+                    bodyColor: '#e8e8ed',
+                    borderColor: 'rgba(99, 102, 241, 0.5)',
+                    borderWidth: 1,
+                    padding: 12,
+                    callbacks: {
+                        label: function(context) {
+                            const value = context.parsed.y;
+                            const sign = value >= 0 ? '+' : '';
+                            const color = value >= 0 ? '#10b981' : '#ef4444';
+                            return sign + '$' + value.toFixed(2);
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    ticks: {
+                        color: 'rgba(136, 136, 160, 0.8)',
+                        maxRotation: 45,
+                        minRotation: 45
+                    },
+                    grid: {
+                        color: 'rgba(42, 42, 58, 0.5)',
+                        drawBorder: false
+                    }
+                },
+                y: {
+                    ticks: {
+                        color: 'rgba(136, 136, 160, 0.8)',
+                        callback: function(value) {
+                            const sign = value >= 0 ? '+' : '';
+                            return sign + '$' + value.toFixed(0);
+                        }
+                    },
+                    grid: {
+                        color: 'rgba(42, 42, 58, 0.5)',
+                        drawBorder: false
+                    },
+                    beginAtZero: false
+                }
+            },
+            interaction: {
+                mode: 'nearest',
+                axis: 'x',
+                intersect: false
+            }
+        }
+    });
+});
+</script>
+{% endif %}
+{% endblock %}

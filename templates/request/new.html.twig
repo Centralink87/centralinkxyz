@@ -1,0 +1,81 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouvelle Demande — Centralink{% endblock %}
+
+{% block stylesheets %}
+<style>
+    .content-wrapper {
+        padding: 2rem 0;
+        min-height: calc(100vh - 80px);
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+    }
+
+    .form-card {
+        background: var(--color-bg-secondary);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-lg);
+        padding: 2.5rem;
+        width: 100%;
+        max-width: 500px;
+    }
+
+    .form-header {
+        margin-bottom: 2rem;
+    }
+
+    .form-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-subtitle {
+        color: var(--color-text-muted);
+    }
+
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--color-text-muted);
+        margin-bottom: 1.5rem;
+        font-size: 0.9rem;
+    }
+
+    .back-link:hover {
+        color: var(--color-text);
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="content-wrapper">
+    <div class="form-card">
+        <a href="{{ path('app_request_index') }}" class="back-link">
+            ← Retour aux demandes
+        </a>
+
+        <div class="form-header">
+            <h1 class="form-title">➕ Nouvelle Demande</h1>
+            <p class="form-subtitle">Créez une demande de dépôt ou de retrait</p>
+        </div>
+
+        {{ form_start(form) }}
+            {% include 'request/_form.html.twig' %}
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    💾 Créer la demande
+                </button>
+                <a href="{{ path('app_request_index') }}" class="btn btn-secondary">
+                    Annuler
+                </a>
+            </div>
+        {{ form_end(form) }}
+    </div>
+</div>
+{% endblock %}
+
+

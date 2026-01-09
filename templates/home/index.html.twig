@@ -1,0 +1,491 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accueil — Centralink{% endblock %}
+
+{% block stylesheets %}
+<style>
+    .content-wrapper {
+        padding: 2rem 0;
+    }
+
+    .page-header {
+        margin-bottom: 2rem;
+    }
+
+    .page-title {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .page-subtitle {
+        color: var(--color-text-muted);
+        font-size: 1rem;
+    }
+
+    .history-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2rem;
+        margin-top: 2rem;
+    }
+
+    @media (max-width: 1024px) {
+        .history-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .history-column {
+        background: var(--color-bg-secondary);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-lg);
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .column-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--color-border);
+    }
+
+    .column-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .column-count {
+        background: var(--color-bg-tertiary);
+        color: var(--color-text-muted);
+        padding: 0.25rem 0.75rem;
+        border-radius: 50px;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+
+    .history-list {
+        flex: 1;
+        overflow-y: auto;
+        max-height: 600px;
+    }
+
+    .history-item {
+        background: var(--color-bg);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-md);
+        padding: 1rem;
+        margin-bottom: 0.75rem;
+        transition: all var(--transition);
+    }
+
+    .history-item:hover {
+        border-color: var(--color-accent);
+        transform: translateX(4px);
+    }
+
+    .history-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .item-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.75rem;
+    }
+
+    .item-type {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.35rem 0.75rem;
+        border-radius: var(--radius-sm);
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+
+    .type-deposit {
+        background: rgba(16, 185, 129, 0.15);
+        color: var(--color-success);
+    }
+
+    .type-withdrawal {
+        background: rgba(239, 68, 68, 0.15);
+        color: #ef4444;
+    }
+
+    .type-transaction {
+        background: rgba(99, 102, 241, 0.15);
+        color: var(--color-accent-light);
+    }
+
+    .item-date {
+        color: var(--color-text-muted);
+        font-size: 0.85rem;
+    }
+
+    .item-details {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+    }
+
+    .detail-item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .detail-label {
+        font-size: 0.75rem;
+        color: var(--color-text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .detail-value {
+        font-weight: 600;
+        font-family: var(--font-mono);
+    }
+
+    .crypto-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.25rem 0.5rem;
+        background: var(--color-bg-tertiary);
+        border-radius: var(--radius-sm);
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    .profit-loss {
+        font-weight: 600;
+        font-family: var(--font-mono);
+    }
+
+    .profit-loss.positive {
+        color: var(--color-success);
+    }
+
+    .profit-loss.negative {
+        color: #ef4444;
+    }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.25rem 0.5rem;
+        border-radius: 50px;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+
+    .status-closed {
+        background: rgba(16, 185, 129, 0.15);
+        color: var(--color-success);
+    }
+
+    .status-open {
+        background: rgba(99, 102, 241, 0.15);
+        color: var(--color-accent-light);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem 1rem;
+        color: var(--color-text-muted);
+    }
+
+    .empty-state-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+    }
+
+    .empty-state-text {
+        font-size: 0.9rem;
+    }
+
+    .chart-container {
+        background: var(--color-bg-secondary);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-lg);
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .chart-wrapper {
+        position: relative;
+        height: 400px;
+        margin-top: 1rem;
+    }
+
+    @media (max-width: 768px) {
+        .chart-wrapper {
+            height: 300px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block javascripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+{% endblock %}
+
+{% block body %}
+<div class="content-wrapper">
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title">📊 Mon Historique</h1>
+            <p class="page-subtitle">Vue d'ensemble de vos dépôts/retraits et de toutes les transactions clôturées</p>
+        </div>
+
+        {# Graphique P&L #}
+        {% if pnlChartData|length > 0 %}
+            <div class="chart-container">
+                <h3 style="margin-bottom: 0.5rem; font-size: 1.1rem; font-weight: 600;">📈 Évolution du P&L Global</h3>
+                <p style="color: var(--color-text-muted); font-size: 0.9rem; margin-bottom: 1rem;">
+                    Profit et perte cumulatif de toutes les transactions clôturées
+                </p>
+                <div class="chart-wrapper">
+                    <canvas id="pnlChart"></canvas>
+                </div>
+            </div>
+        {% endif %}
+
+        <div class="history-grid">
+            {# Colonne 1: Dépôts et Retraits #}
+            <div class="history-column">
+                <div class="column-header">
+                    <h2 class="column-title">
+                        💰 Dépôts & Retraits
+                    </h2>
+                    <span class="column-count">{{ requests|length }}</span>
+                </div>
+                <div class="history-list">
+                    {% if requests|length > 0 %}
+                        {% for request in requests %}
+                            <div class="history-item">
+                                <div class="item-header">
+                                    <span class="item-type type-{{ request.type.value }}">
+                                        {% if request.type.value == 'deposit' %}
+                                            ⬇️ {{ request.type.label }}
+                                        {% else %}
+                                            ⬆️ {{ request.type.label }}
+                                        {% endif %}
+                                    </span>
+                                    <span class="item-date">
+                                        {{ request.validatedAt|date('d/m/Y H:i') }}
+                                    </span>
+                                </div>
+                                <div class="item-details">
+                                    <div class="detail-item">
+                                        <span class="detail-label">Montant</span>
+                                        <span class="detail-value">
+                                            {{ request.amount|number_format(4) }} {{ request.cryptoType.symbol }}
+                                        </span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Crypto</span>
+                                        <span class="detail-value">
+                                            <span class="crypto-badge">{{ request.cryptoType.symbol }}</span>
+                                        </span>
+                                    </div>
+                                </div>
+                                {% if request.publicAddress %}
+                                    <div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--color-border);">
+                                        <span class="detail-label">Adresse</span>
+                                        <div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--color-text-muted); margin-top: 0.25rem; word-break: break-all;">
+                                            {{ request.publicAddress }}
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📭</div>
+                            <p class="empty-state-text">Aucun dépôt ou retrait validé</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            {# Colonne 2: Transactions #}
+            <div class="history-column">
+                <div class="column-header">
+                    <h2 class="column-title">
+                        📈 Toutes les Transactions
+                    </h2>
+                    <span class="column-count">{{ transactions|length }}</span>
+                </div>
+                <div class="history-list">
+                    {% if transactions|length > 0 %}
+                        {% for transaction in transactions %}
+                            <div class="history-item">
+                                <div class="item-header">
+                                    <span class="item-type type-transaction">
+                                        {{ transaction.cryptoType.symbol }}
+                                    </span>
+                                    <span class="item-date">
+                                        {{ transaction.transactionDate|date('d/m/Y') }}
+                                    </span>
+                                </div>
+                                <div class="item-details">
+                                    <div class="detail-item">
+                                        <span class="detail-label">Utilisateur</span>
+                                        <span class="detail-value">
+                                            {{ transaction.user.fullName }}
+                                        </span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Montant</span>
+                                        <span class="detail-value">
+                                            {{ transaction.amount|number_format(4) }}
+                                        </span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Entry Price</span>
+                                        <span class="detail-value">
+                                            ${{ transaction.entryPrice|number_format(2) }}
+                                        </span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Exit Price</span>
+                                        <span class="detail-value">
+                                            ${{ transaction.exitPrice|number_format(2) }}
+                                        </span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">P&L</span>
+                                        {% set pl = transaction.profitLoss %}
+                                        <span class="detail-value profit-loss {{ pl >= 0 ? 'positive' : 'negative' }}">
+                                            {{ pl >= 0 ? '+' : '' }}${{ pl|number_format(2) }}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div style="margin-top: 0.75rem;">
+                                    <span class="status-badge status-closed">✓ Clôturée</span>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📊</div>
+                            <p class="empty-state-text">Aucune transaction validée</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if pnlChartData|length > 0 %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const pnlData = {{ pnlChartData|json_encode|raw }};
+    
+    const labels = pnlData.map(item => item.dateFormatted);
+    const cumulativePnl = pnlData.map(item => parseFloat(item.cumulativePnl.toFixed(2)));
+    
+    const ctx = document.getElementById('pnlChart').getContext('2d');
+    
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'P&L Cumulatif ($)',
+                data: cumulativePnl,
+                borderColor: 'rgb(99, 102, 241)',
+                backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.4,
+                pointRadius: 4,
+                pointHoverRadius: 6,
+                pointBackgroundColor: 'rgb(99, 102, 241)',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: true,
+                    labels: {
+                        color: 'rgba(232, 232, 237, 0.8)',
+                        font: {
+                            size: 12
+                        }
+                    }
+                },
+                tooltip: {
+                    mode: 'index',
+                    intersect: false,
+                    backgroundColor: 'rgba(26, 26, 37, 0.95)',
+                    titleColor: '#e8e8ed',
+                    bodyColor: '#e8e8ed',
+                    borderColor: 'rgba(99, 102, 241, 0.5)',
+                    borderWidth: 1,
+                    padding: 12,
+                    callbacks: {
+                        label: function(context) {
+                            const value = context.parsed.y;
+                            const sign = value >= 0 ? '+' : '';
+                            return sign + '$' + value.toFixed(2);
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    ticks: {
+                        color: 'rgba(136, 136, 160, 0.8)',
+                        maxRotation: 45,
+                        minRotation: 45
+                    },
+                    grid: {
+                        color: 'rgba(42, 42, 58, 0.5)',
+                        drawBorder: false
+                    }
+                },
+                y: {
+                    ticks: {
+                        color: 'rgba(136, 136, 160, 0.8)',
+                        callback: function(value) {
+                            const sign = value >= 0 ? '+' : '';
+                            return sign + '$' + value.toFixed(0);
+                        }
+                    },
+                    grid: {
+                        color: 'rgba(42, 42, 58, 0.5)',
+                        drawBorder: false
+                    },
+                    beginAtZero: false
+                }
+            },
+            interaction: {
+                mode: 'nearest',
+                axis: 'x',
+                intersect: false
+            }
+        }
+    });
+});
+</script>
+{% endif %}
+{% endblock %}
