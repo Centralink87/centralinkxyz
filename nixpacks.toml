@@ -21,7 +21,7 @@
         "mkdir -p assets/vendor",
         "php bin/console importmap:install --env=prod --no-debug -vv || (echo 'ERROR: importmap:install failed' && exit 1)",
         "test -d assets/vendor/@hotwired/stimulus || (echo 'ERROR: @hotwired/stimulus not installed' && exit 1)",
-        "php bin/console assets:install public",
+        "php bin/console assets:install public --env=prod --no-debug",
         "php bin/console asset-map:compile --env=prod --no-debug",
         "php bin/console cache:clear --env=prod --no-debug"
     ]
