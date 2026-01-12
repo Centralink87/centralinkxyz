@@ -1,0 +1,108 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes clés API — Centralink{% endblock %}
+
+{% block stylesheets %}
+<style>
+    .content-wrapper {
+        padding: 2rem 0;
+    }
+
+    .page-header {
+        margin-bottom: 2rem;
+    }
+
+    .page-title {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .api-card {
+        background: var(--color-bg-secondary);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-lg);
+        padding: 2rem;
+        max-width: 600px;
+    }
+
+    .api-label {
+        font-size: 0.85rem;
+        color: var(--color-text-muted);
+        margin-bottom: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .api-key {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        background: var(--color-bg-tertiary);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-md);
+        padding: 1rem 1.25rem;
+    }
+
+    .api-key-value {
+        font-family: var(--font-mono);
+        font-size: 0.95rem;
+        color: var(--color-accent-light);
+        flex: 1;
+        word-break: break-all;
+    }
+
+    .copy-btn {
+        background: var(--color-accent);
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        font-size: 0.85rem;
+        font-weight: 500;
+        transition: all var(--transition);
+    }
+
+    .copy-btn:hover {
+        background: var(--color-accent-light);
+    }
+
+    .copy-btn.copied {
+        background: var(--color-success);
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="content-wrapper">
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title">Mes clés API</h1>
+        </div>
+
+        <div class="api-card">
+            <div class="api-label">Clé API</div>
+            <div class="api-key">
+                <span class="api-key-value" id="apiKey">pk_e7b79fe7021a4776867f793110447570</span>
+                <button class="copy-btn" onclick="copyApiKey()">Copier</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function copyApiKey() {
+    const apiKey = document.getElementById('apiKey').textContent;
+    navigator.clipboard.writeText(apiKey).then(() => {
+        const btn = document.querySelector('.copy-btn');
+        btn.textContent = 'Copié !';
+        btn.classList.add('copied');
+        setTimeout(() => {
+            btn.textContent = 'Copier';
+            btn.classList.remove('copied');
+        }, 2000);
+    });
+}
+</script>
+{% endblock %}
