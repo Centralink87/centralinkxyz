@@ -272,20 +272,20 @@
 <div class="content-wrapper">
     <div class="container">
         <div class="page-header">
-            <h1 class="page-title">📊 Mes Transactions</h1>
+            <h1 class="page-title">Mes Transactions</h1>
             <a href="{{ path('app_transaction_new') }}" class="btn btn-primary">
-                ➕ Nouvelle transaction
+                Nouvelle transaction
             </a>
         </div>
 
         {# Transactions en attente #}
         {% if pendingTransactions|length > 0 %}
             <div class="pending-notice">
-                ⏳ Vous avez {{ pendingTransactions|length }} transaction(s) en attente de validation par un administrateur.
+                Vous avez {{ pendingTransactions|length }} transaction(s) en attente de validation par un administrateur.
             </div>
 
             <div class="section-header">
-                <h2 class="section-title">⏳ En attente de validation</h2>
+                <h2 class="section-title">En attente de validation</h2>
                 <span class="section-badge">{{ pendingTransactions|length }}</span>
             </div>
 
@@ -320,7 +320,7 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <span class="status-badge status-pending">⏳ En attente</span>
+                                    <span class="status-badge status-pending">En attente</span>
                                 </td>
                                 <td class="hide-mobile">
                                     {{ transaction.createdAt|date('d/m/Y H:i') }}
@@ -344,7 +344,7 @@
 
         {# Stats (transactions validées) #}
         <div class="section-header" style="margin-top: {{ pendingTransactions|length > 0 ? '3rem' : '0' }};">
-            <h2 class="section-title">✅ Transactions validées</h2>
+            <h2 class="section-title">Transactions validées</h2>
         </div>
 
         <div class="stats-grid">
@@ -371,7 +371,7 @@
         {# Graphique P&L #}
         {% if pnlChartData|length > 0 %}
             <div class="chart-container">
-                <h3 style="margin-bottom: 0.5rem; font-size: 1.1rem; font-weight: 600;">📈 Évolution du P&L</h3>
+                <h3 style="margin-bottom: 0.5rem; font-size: 1.1rem; font-weight: 600;">Évolution du P&L</h3>
                 <p style="color: var(--color-text-muted); font-size: 0.9rem; margin-bottom: 1rem;">
                     Profit et perte cumulatif par date de transaction
                 </p>

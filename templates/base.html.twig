@@ -328,7 +328,7 @@
         <div class="top-banner">
             <div class="container">
                 <div class="top-banner-content">
-                    <span>Nouveau : Vous naviguez sur la V2 (Bêta). Mise à jour majeure de l'infrastructure pour plus de rapidité et de stabilité.</span>
+                    <span>(Beta V2) Nous finalisons le rapatriement de votre historique. L'affichage de certaines données peut être différé.</span>
                     <a href="mailto:centralinkxyz@protonmail.com" class="top-banner-link">Contacter le support →</a>
                 </div>
             </div>
@@ -344,7 +344,7 @@
                     {% block nav_items %}
                         {% if app.user %}
                             {% if not is_granted('ROLE_ADMIN') %}
-                                <li><a href="{{ path('app_home') }}">🏠 Accueil</a></li>
+                                <li><a href="{{ path('app_home') }}">Accueil</a></li>
                             {% endif %}
                             <li><a href="{{ path('app_request_index') }}">Mes Demandes</a></li>
                             {% if is_granted('ROLE_ADMIN') %}
@@ -356,9 +356,9 @@
                 <div class="nav-auth">
                     {% if app.user %}
                         {% if is_granted('ROLE_ADMIN') %}
-                            <a href="{{ path('admin') }}" class="btn btn-secondary btn-sm">🛡️ Admin</a>
+                            <a href="{{ path('admin') }}" class="btn btn-secondary btn-sm">Admin</a>
                         {% endif %}
-                        <span class="user-greeting">👋 {{ app.user.firstName }}</span>
+                        <span class="user-greeting">{{ app.user.firstName }}</span>
                         <a href="{{ path('app_logout') }}" class="btn btn-secondary btn-sm">Déconnexion</a>
                     {% else %}
                         <a href="{{ path('app_login') }}" class="btn btn-secondary btn-sm">Connexion</a>

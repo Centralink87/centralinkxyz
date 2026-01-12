@@ -70,7 +70,7 @@
         </a>
 
         <div class="form-header">
-            <h1 class="form-title">✏️ Modifier Transaction</h1>
+            <h1 class="form-title">Modifier Transaction</h1>
             <p class="form-subtitle">{{ transaction.cryptoType.symbol }} — {{ transaction.amount|number_format(4) }}</p>
         </div>
 
@@ -79,7 +79,7 @@
 
             <div class="form-actions">
                 <button type="submit" class="btn btn-primary">
-                    💾 Enregistrer
+                    Enregistrer
                 </button>
                 <a href="{{ path('app_transaction_index') }}" class="btn btn-secondary">
                     Annuler
@@ -88,11 +88,11 @@
         {{ form_end(form) }}
 
         <div class="danger-zone">
-            <h3>⚠️ Zone dangereuse</h3>
+            <h3>Zone dangereuse</h3>
             <form action="{{ path('app_transaction_delete', {id: transaction.id}) }}" method="post" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette transaction ?');">
                 <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ transaction.id) }}">
                 <button type="submit" class="btn btn-secondary" style="border-color: #ef4444; color: #ef4444;">
-                    🗑️ Supprimer
+                    Supprimer
                 </button>
             </form>
         </div>
