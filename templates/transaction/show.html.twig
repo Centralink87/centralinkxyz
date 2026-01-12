@@ -265,11 +265,11 @@
                 <div class="transaction-actions">
                     {% if not transaction.exitPrice %}
                         <a href="{{ path('app_transaction_close', {id: transaction.id}) }}" class="btn btn-primary">
-                            💰 Clôturer la position
+                            Clôturer la position
                         </a>
                     {% endif %}
                     <a href="{{ path('app_transaction_edit', {id: transaction.id}) }}" class="btn btn-secondary">
-                        ✏️ Modifier
+                        Modifier
                     </a>
                 </div>
             </div>

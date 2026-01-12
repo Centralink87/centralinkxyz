@@ -23,6 +23,40 @@
         font-size: 1rem;
     }
 
+    /* Stats Cards */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: var(--color-bg-secondary);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-lg);
+        padding: 1.5rem;
+    }
+
+    .stat-label {
+        font-size: 0.85rem;
+        color: var(--color-text-muted);
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-value {
+        font-size: 1.75rem;
+        font-weight: 700;
+    }
+
+    .stat-value.positive {
+        color: var(--color-success);
+    }
+
+    .stat-value.negative {
+        color: #ef4444;
+    }
+
     .history-grid {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
@@ -246,14 +280,36 @@
 <div class="content-wrapper">
     <div class="container">
         <div class="page-header">
-            <h1 class="page-title">📊 Mon Historique</h1>
+            <h1 class="page-title">Mon Historique</h1>
             <p class="page-subtitle">Vue d'ensemble de vos dépôts/retraits et de toutes les transactions clôturées</p>
+        </div>
+
+        {# Cartes statistiques utilisateur #}
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Total Dépôt</div>
+                <div class="stat-value">${{ totalDeposits|number_format(2, '.', ',') }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Fonds disponible</div>
+                <div class="stat-value {{ availableFunds >= 0 ? 'positive' : 'negative' }}">${{ availableFunds|number_format(2, '.', ',') }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Transactions</div>
+                <div class="stat-value">{{ userTransactionsCount }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">P&L Total</div>
+                <div class="stat-value {{ userTotalPnl >= 0 ? 'positive' : 'negative' }}">
+                    {{ userTotalPnl >= 0 ? '+' : '' }}${{ userTotalPnl|number_format(2, '.', ',') }}
+                </div>
+            </div>
         </div>
 
         {# Graphique P&L #}
         {% if pnlChartData|length > 0 %}
             <div class="chart-container">
-                <h3 style="margin-bottom: 0.5rem; font-size: 1.1rem; font-weight: 600;">📈 Évolution du P&L Global</h3>
+                <h3 style="margin-bottom: 0.5rem; font-size: 1.1rem; font-weight: 600;">Évolution du P&L Global</h3>
                 <p style="color: var(--color-text-muted); font-size: 0.9rem; margin-bottom: 1rem;">
                     Profit et perte cumulatif de toutes les transactions clôturées
                 </p>
@@ -268,7 +324,7 @@
             <div class="history-column">
                 <div class="column-header">
                     <h2 class="column-title">
-                        💰 Dépôts & Retraits
+                        Dépôts & Retraits
                     </h2>
                     <span class="column-count">{{ requests|length }}</span>
                 </div>
@@ -292,7 +348,7 @@
                                     <div class="detail-item">
                                         <span class="detail-label">Montant</span>
                                         <span class="detail-value">
-                                            {{ request.amount|number_format(4) }} {{ request.cryptoType.symbol }}
+                                            {{ request.amount|number_format(2) }} {{ request.cryptoType.symbol }}
                                         </span>
                                     </div>
                                     <div class="detail-item">
@@ -325,7 +381,7 @@
             <div class="history-column">
                 <div class="column-header">
                     <h2 class="column-title">
-                        📈 Toutes les Transactions
+                        Toutes les Transactions
                     </h2>
                     <span class="column-count">{{ transactions|length }}</span>
                 </div>
@@ -351,7 +407,7 @@
                                     <div class="detail-item">
                                         <span class="detail-label">Montant</span>
                                         <span class="detail-value">
-                                            {{ transaction.amount|number_format(4) }}
+                                            {{ transaction.amount|number_format(2) }}
                                         </span>
                                     </div>
                                     <div class="detail-item">

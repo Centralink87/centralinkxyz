@@ -219,7 +219,7 @@
 <div class="content-wrapper">
     <div class="container">
         <div class="page-header">
-            <h1 class="page-title">💳 Mes Demandes</h1>
+            <h1 class="page-title">Mes Demandes</h1>
             <a href="{{ path('app_request_new') }}" class="btn btn-primary">
                 ➕ Nouvelle demande
             </a>
@@ -228,11 +228,11 @@
         {# Demandes en attente #}
         {% if pendingRequests|length > 0 %}
             <div class="pending-notice">
-                ⏳ Vous avez {{ pendingRequests|length }} demande(s) en attente de validation par un administrateur.
+                Vous avez {{ pendingRequests|length }} demande(s) en attente de validation par un administrateur.
             </div>
 
             <div class="section-header">
-                <h2 class="section-title">⏳ En attente de validation</h2>
+                <h2 class="section-title">En attente de validation</h2>
                 <span class="section-badge">{{ pendingRequests|length }}</span>
             </div>
 
@@ -275,7 +275,7 @@
                                     {% endif %}
                                 </td>
                                 <td>
-                                    <span class="status-badge status-pending">⏳ En attente</span>
+                                    <span class="status-badge status-pending">En attente</span>
                                 </td>
                                 <td class="hide-mobile">
                                     {{ request.createdAt|date('d/m/Y H:i') }}
@@ -296,7 +296,7 @@
 
         {# Demandes validées #}
         <div class="section-header" style="margin-top: {{ pendingRequests|length > 0 ? '3rem' : '0' }};">
-            <h2 class="section-title">✅ Demandes validées</h2>
+            <h2 class="section-title">Demandes validées</h2>
         </div>
 
         <div class="table-container">
@@ -357,7 +357,6 @@
                 </table>
             {% else %}
                 <div class="empty-state">
-                    <div class="empty-state-icon">📭</div>
                     <h3>Aucune demande validée</h3>
                     <p>Vos demandes apparaîtront ici après validation par un administrateur.</p>
                     <a href="{{ path('app_request_new') }}" class="btn btn-primary" style="margin-top: 1rem;">
