@@ -38,10 +38,6 @@ final class HomeController extends AbstractController
         // Seulement les requests de l'utilisateur connecté
         $validatedRequests = $this->requestRepository->findValidatedByUser($user);
         
-        // Transactions de l'utilisateur (validées)
-        $userTransactions = $this->transactionRepository->findValidatedByUser($user);
-        $userClosedTransactions = $this->transactionRepository->findValidatedAndClosedByUser($user);
-
         // Calcul des stats utilisateur
         $totalDeposits = 0.0;
         $totalWithdrawals = 0.0;
@@ -54,12 +50,6 @@ final class HomeController extends AbstractController
             }
         }
         $availableFunds = $totalDeposits - $totalWithdrawals;
-        
-        // Calcul du P&L total de l'utilisateur
-        $userTotalPnl = 0.0;
-        foreach ($userClosedTransactions as $transaction) {
-            $userTotalPnl += (float) $transaction->getProfitLoss();
-        }
 
         // Préparation des données pour le graphique P&L (P&L cumulatif de toutes les transactions)
         $pnlData = [];
@@ -82,14 +72,20 @@ final class HomeController extends AbstractController
             ];
         }
 
+        // Calcul du P&L total de toutes les transactions (admin)
+        $adminTotalPnl = 0.0;
+        foreach ($closedTransactions as $transaction) {
+            $adminTotalPnl += (float) $transaction->getProfitLoss();
+        }
+
         return $this->render('home/index.html.twig', [
             'transactions' => $closedTransactions,
             'requests' => $validatedRequests,
             'pnlChartData' => $pnlData,
             'totalDeposits' => $totalDeposits,
             'availableFunds' => $availableFunds,
-            'userTransactionsCount' => count($userTransactions),
-            'userTotalPnl' => $userTotalPnl,
+            'adminTransactionsCount' => count($closedTransactions),
+            'adminTotalPnl' => $adminTotalPnl,
         ]);
     }
 }

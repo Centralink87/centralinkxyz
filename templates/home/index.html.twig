@@ -296,12 +296,12 @@
             </div>
             <div class="stat-card">
                 <div class="stat-label">Transactions</div>
-                <div class="stat-value">{{ userTransactionsCount }}</div>
+                <div class="stat-value">{{ adminTransactionsCount }}</div>
             </div>
             <div class="stat-card">
                 <div class="stat-label">P&L Total</div>
-                <div class="stat-value {{ userTotalPnl >= 0 ? 'positive' : 'negative' }}">
-                    {{ userTotalPnl >= 0 ? '+' : '' }}${{ userTotalPnl|number_format(2, '.', ',') }}
+                <div class="stat-value {{ adminTotalPnl >= 0 ? 'positive' : 'negative' }}">
+                    {{ adminTotalPnl >= 0 ? '+' : '' }}${{ adminTotalPnl|number_format(2, '.', ',') }}
                 </div>
             </div>
         </div>
