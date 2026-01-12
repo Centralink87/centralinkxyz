@@ -350,6 +350,9 @@
                             {% if is_granted('ROLE_ADMIN') %}
                                 <li><a href="{{ path('app_transaction_index') }}">Transactions</a></li>
                             {% endif %}
+                            {% if not is_granted('ROLE_ADMIN') %}
+                                <li><a href="{{ path('app_api_keys') }}">API</a></li>
+                            {% endif %}
                         {% endif %}
                     {% endblock %}
                 </ul>
