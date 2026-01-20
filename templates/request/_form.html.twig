@@ -68,6 +68,55 @@
     #form-group-publicAddress.show {
         display: block !important;
     }
+
+    /* Adresse destinataire pour dépôt */
+    #deposit-address-group {
+        display: none;
+    }
+
+    #deposit-address-group.show {
+        display: block !important;
+    }
+
+    .deposit-address-box {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        background: var(--color-bg-tertiary);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-md);
+        padding: 0.875rem 1rem;
+    }
+
+    .deposit-address-value {
+        font-family: var(--font-mono);
+        font-size: 0.9rem;
+        color: var(--color-accent-light);
+        flex: 1;
+        word-break: break-all;
+        user-select: all;
+    }
+
+    .copy-address-btn {
+        background: var(--color-accent);
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        font-size: 0.85rem;
+        font-weight: 500;
+        transition: all var(--transition);
+        white-space: nowrap;
+    }
+
+    .copy-address-btn:hover {
+        background: var(--color-accent-light);
+    }
+
+    .copy-address-btn.copied {
+        background: var(--color-success);
+    }
 </style>
 
 {% for field in form %}
@@ -82,33 +131,59 @@
     {% endif %}
 {% endfor %}
 
+{# Champ adresse destinataire pour les dépôts (lecture seule) #}
+<div class="form-group" id="deposit-address-group">
+    <label>Adresse destinataire</label>
+    <div class="deposit-address-box">
+        <span class="deposit-address-value" id="depositAddress">0x73e9a27083cbf23720397f05f2bbdd477c592ddd</span>
+        <button type="button" class="copy-address-btn" onclick="copyDepositAddress()">Copier</button>
+    </div>
+    <p class="form-hint">Envoyez vos fonds à cette adresse pour effectuer votre dépôt.</p>
+</div>
+
 {{ form_rest(form) }}
 
 <script>
+// Fonction pour copier l'adresse de dépôt
+function copyDepositAddress() {
+    const address = document.getElementById('depositAddress').textContent;
+    navigator.clipboard.writeText(address).then(() => {
+        const btn = document.querySelector('.copy-address-btn');
+        btn.textContent = 'Copié !';
+        btn.classList.add('copied');
+        setTimeout(() => {
+            btn.textContent = 'Copier';
+            btn.classList.remove('copied');
+        }, 2000);
+    });
+}
+
 (function() {
     function initFormToggle() {
         const typeSelect = document.querySelector('select[name="request_form[type]"]') ||
                           document.querySelector('select[id*="type"]');
         
         const publicAddressGroup = document.getElementById('form-group-publicAddress');
+        const depositAddressGroup = document.getElementById('deposit-address-group');
         
-        if (!typeSelect || !publicAddressGroup) {
+        if (!typeSelect || !publicAddressGroup || !depositAddressGroup) {
             setTimeout(initFormToggle, 100);
             return;
         }
         
-        function togglePublicAddress() {
+        function toggleFields() {
             const selectedOption = typeSelect.options[typeSelect.selectedIndex];
             const selectedText = selectedOption ? selectedOption.text.trim().toLowerCase() : '';
             
-            // Vérifier si le texte contient "retrait"
+            // Vérifier si le texte contient "retrait" ou "dépôt"
             const isWithdrawal = selectedText === 'retrait' || selectedText.includes('retrait');
+            const isDeposit = selectedText === 'dépôt' || selectedText.includes('dépôt') || selectedText.includes('depot');
             
-            console.log('Selected text:', selectedText, 'Is withdrawal:', isWithdrawal);
-            
+            // Afficher/masquer le champ publicAddress pour les retraits
             if (isWithdrawal) {
                 publicAddressGroup.classList.remove('hidden');
                 publicAddressGroup.classList.add('show');
+                publicAddressGroup.style.display = 'block';
                 const input = publicAddressGroup.querySelector('input');
                 if (input) {
                     input.setAttribute('required', 'required');
@@ -116,22 +191,33 @@
             } else {
                 publicAddressGroup.classList.add('hidden');
                 publicAddressGroup.classList.remove('show');
+                publicAddressGroup.style.display = 'none';
                 const input = publicAddressGroup.querySelector('input');
                 if (input) {
                     input.removeAttribute('required');
                     input.value = '';
                 }
             }
+            
+            // Afficher/masquer l'adresse destinataire pour les dépôts
+            if (isDeposit) {
+                depositAddressGroup.classList.add('show');
+                depositAddressGroup.style.display = 'block';
+            } else {
+                depositAddressGroup.classList.remove('show');
+                depositAddressGroup.style.display = 'none';
+            }
         }
         
         // Masquer par défaut
         publicAddressGroup.style.display = 'none';
+        depositAddressGroup.style.display = 'none';
         
         // État initial
-        togglePublicAddress();
+        toggleFields();
         
         // Écouter les changements
-        typeSelect.addEventListener('change', togglePublicAddress);
+        typeSelect.addEventListener('change', toggleFields);
     }
     
     if (document.readyState === 'loading') {

@@ -49,7 +49,15 @@ final class HomeController extends AbstractController
                 $totalWithdrawals += $amount;
             }
         }
-        $availableFunds = $totalDeposits - $totalWithdrawals;
+
+        // Calcul du P&L total de toutes les transactions (pour fonds disponibles)
+        $adminTotalPnl = 0.0;
+        foreach ($closedTransactions as $transaction) {
+            $adminTotalPnl += (float) $transaction->getProfitLoss();
+        }
+
+        // Fonds disponibles = Total dépôt - Total Retrait + P&L total
+        $availableFunds = $totalDeposits - $totalWithdrawals + $adminTotalPnl;
 
         // Préparation des données pour le graphique P&L (P&L cumulatif de toutes les transactions)
         $pnlData = [];
@@ -70,12 +78,6 @@ final class HomeController extends AbstractController
                 'pnl' => $profitLoss,
                 'cumulativePnl' => $cumulativePnl,
             ];
-        }
-
-        // Calcul du P&L total de toutes les transactions (admin)
-        $adminTotalPnl = 0.0;
-        foreach ($closedTransactions as $transaction) {
-            $adminTotalPnl += (float) $transaction->getProfitLoss();
         }
 
         return $this->render('home/index.html.twig', [
