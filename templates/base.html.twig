@@ -328,7 +328,7 @@
         <div class="top-banner">
             <div class="container">
                 <div class="top-banner-content">
-                    <span>(Beta V2) Nous finalisons le rapatriement de votre historique. L'affichage de certaines données peut être différé.</span>
+                    <span>Release v2.2.1 : Déploiement de la nouvelle architecture serveur effectué.</span>
                     <a href="mailto:centralinkxyz@protonmail.com" class="top-banner-link">Contacter le support →</a>
                 </div>
             </div>
@@ -337,7 +337,7 @@
         {# Navigation #}
         <nav class="navbar">
             <div class="container">
-                <a href="{% if app.user %}{% if is_granted('ROLE_ADMIN') %}{{ path('app_transaction_index') }}{% else %}{{ path('app_request_index') }}{% endif %}{% else %}{{ path('app_login') }}{% endif %}" class="logo">
+                <a href="{% if app.user %}{% if is_granted('ROLE_ADMIN') %}{{ path('app_transaction_index') }}{% else %}{{ path('app_home') }}{% endif %}{% else %}{{ path('app_login') }}{% endif %}" class="logo">
                     <img src="{{ asset('images/logo.svg') }}" alt="Centralink" style="height: 37px; width: auto;">
                 </a>
                 <ul class="nav-links">
