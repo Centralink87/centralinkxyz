@@ -113,22 +113,6 @@ class TransactionRepository extends ServiceEntityRepository
     }
 
     /**
-     * Trouve TOUTES les transactions VALIDÉES et CLÔTURÉES
-     * (pour afficher à tous les utilisateurs sur la home)
-     * 
-     * @return Transaction[]
-     */
-    public function findAllValidatedAndClosed(): array
-    {
-        return $this->createQueryBuilder('t')
-            ->andWhere('t.isValidated = true')
-            ->andWhere('t.exitPrice IS NOT NULL')
-            ->orderBy('t.transactionDate', 'DESC')
-            ->getQuery()
-            ->getResult();
-    }
-
-    /**
      * Calcule le total investi par un utilisateur (transactions validées)
      */
     public function getTotalInvestedByUser(User $user): float

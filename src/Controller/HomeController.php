@@ -33,8 +33,8 @@ final class HomeController extends AbstractController
         }
 
         // Pour les utilisateurs normaux : afficher l'historique
-        // Toutes les transactions validées ET clôturées (ajoutées par l'admin)
-        $closedTransactions = $this->transactionRepository->findAllValidatedAndClosed();
+        // Transactions validées ET clôturées de l'utilisateur connecté uniquement
+        $closedTransactions = $this->transactionRepository->findValidatedAndClosedByUser($user);
         // Seulement les requests de l'utilisateur connecté
         $validatedRequests = $this->requestRepository->findValidatedByUser($user);
         
