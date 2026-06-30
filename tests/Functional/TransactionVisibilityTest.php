@@ -114,4 +114,30 @@ class TransactionVisibilityTest extends WebTestCase
         // Maxime n'a qu'UNE transaction, peu importe le nombre total en base
         $this->assertSame('1', trim($crawler->filter('.column-count')->eq(1)->text()));
     }
+
+    public function testAdminSeesTransactionsOfAllClientsOnTransactionsPage(): void
+    {
+        $client = $this->client;
+
+        $admin = $this->createUser('admin3@example.com', 'Admin', 'User');
+        $admin->setRoles(['ROLE_ADMIN']);
+        $maxime = $this->createUser('maxime3@example.com', 'Maxime', 'Dupont');
+        $john = $this->createUser('john3@example.com', 'John', 'Smith');
+
+        // Transactions appartenant à deux clients différents, pas à l'admin
+        $this->createClosedTransaction($maxime, '0.5', '20000', '25000');
+        $this->createClosedTransaction($john, '1.2', '1500', '1800');
+
+        $this->em->flush();
+
+        $client->loginUser($admin);
+        $crawler = $client->request('GET', '/transactions');
+
+        $this->assertResponseIsSuccessful();
+
+        $content = $crawler->filter('body')->html();
+
+        $this->assertStringContainsString('Maxime Dupont', $content);
+        $this->assertStringContainsString('John Smith', $content);
+    }
 }
