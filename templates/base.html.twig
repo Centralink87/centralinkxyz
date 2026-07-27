@@ -200,6 +200,21 @@
                 font-size: 0.85rem;
             }
 
+            .badge-pending {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                min-width: 18px;
+                height: 18px;
+                padding: 0 5px;
+                margin-left: 0.4rem;
+                background: #ef4444;
+                color: white;
+                font-size: 0.7rem;
+                font-weight: 700;
+                border-radius: 999px;
+            }
+
             /* Buttons */
             .btn {
                 display: inline-flex;
@@ -356,7 +371,10 @@
                 <div class="nav-auth">
                     {% if app.user %}
                         {% if is_granted('ROLE_ADMIN') %}
-                            <a href="{{ path('admin') }}" class="btn btn-secondary btn-sm">Admin</a>
+                            <a href="{{ path('admin') }}" class="btn btn-secondary btn-sm">
+                                Admin
+                                {{ render(controller('App\\Controller\\RequestController::pendingBadge')) }}
+                            </a>
                         {% endif %}
                         <span class="user-greeting">{{ app.user.firstName }}</span>
                         <a href="{{ path('app_logout') }}" class="btn btn-secondary btn-sm">Déconnexion</a>
